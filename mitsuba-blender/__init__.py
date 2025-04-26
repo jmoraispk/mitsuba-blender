@@ -290,17 +290,38 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    context = bpy.context
-    prefs = get_addon_preferences(context)
-    prefs.require_restart = False
+    # Safely get context and preferences
+    try:
+        context = bpy.context
+        prefs = get_addon_preferences(context)
+        prefs.require_restart = False
+    except Exception as e:
+        print(f"⚠️ Failed to access preferences: {e}")
 
-    if not ensure_pip():
-        raise RuntimeError('Cannot activate mitsuba-blender add-on. Python pip module cannot be initialized.')
+    try:
+        if not ensure_pip():
+            raise RuntimeError('Cannot activate mitsuba-blender add-on. Python pip module cannot be initialized.')
+        check_pip_dependencies(context)
+    except Exception as e:
+        print(f"⚠️ Pip checks failed: {e}")
 
-    check_pip_dependencies(context)
-    if try_register_mitsuba(context):
+    # 🚀 ADD THESE LINES to force proper exporter registration
+    try:
+        from . import io, engine
+        io.register()
+        engine.register()
+        print("✅ Forced io and engine registration")
+    except Exception as e:
+        print(f"❌ Failed to register io/engine: {e}")
+        import traceback; traceback.print_exc()
+
+    try:
         import mitsuba
         print(f'mitsuba-blender v{".".join(str(e) for e in bl_info["version"])}{bl_info["warning"] if "warning" in bl_info else ""} registered (with mitsuba v{mitsuba.__version__})')
+    except ImportError:
+        print("⚠️ Mitsuba not installed or not detected.")
+
+
 
 def unregister():
     for cls in classes:

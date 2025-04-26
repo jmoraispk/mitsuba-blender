@@ -105,7 +105,7 @@ def convert_glossy_materials_cycles(export_ctx, current_node):
 
     roughness = convert_float_texture_node(export_ctx, current_node.inputs['Roughness'])
 
-    if roughness > 0:
+    if roughness and current_node.distribution != 'SHARP':
         params.update({
             'type': 'roughconductor',
             'alpha': roughness,
