@@ -24,7 +24,11 @@ from . import textures
 
 def _eval_mi_bsdf_retro_reflection(mi_context, mi_mat, default):
     ''' Evaluate the reflectance color of a BSDF for a perfect perpendicular reflection '''
+    
+    import mitsuba as mi
+    mi.set_variant('scalar_rgb')
     from mitsuba import load_dict, BSDFContext, SurfaceInteraction3f, Vector3f
+    
     # Generate the BSDF properties dictionary
     bsdf_dict = {
         'type': mi_mat.plugin_name(),

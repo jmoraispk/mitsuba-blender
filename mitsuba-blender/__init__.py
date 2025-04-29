@@ -22,6 +22,9 @@ import subprocess
 
 from . import io, engine
 
+import mitsuba as mi
+mi.set_variant('scalar_rgb')
+
 DEPS_MITSUBA_VERSION = '3.5.0'
 
 def get_addon_preferences(context):

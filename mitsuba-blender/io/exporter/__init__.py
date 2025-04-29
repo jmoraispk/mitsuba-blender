@@ -108,5 +108,8 @@ class SceneConverter:
         self.xml_writer.process(self.export_ctx.scene_data)
 
     def dict_to_scene(self):
+        import mitsuba as mi
+        mi.set_variant('scalar_rgb')
         from mitsuba import load_dict
+        
         return load_dict(self.export_ctx.scene_data)
